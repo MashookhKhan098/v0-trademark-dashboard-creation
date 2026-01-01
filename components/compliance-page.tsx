@@ -1,9 +1,20 @@
 "use client"
 
-import type React from "react"
-
 import { useState } from "react"
-import { ChevronLeft, ChevronRight, ChevronDown, Search, Check } from "lucide-react"
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronDown,
+  Search,
+  Check,
+  X,
+  Bold,
+  Italic,
+  Code,
+  List,
+  ListOrdered,
+  AlignLeft,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import Image from "next/image"
@@ -28,12 +39,37 @@ interface ComplianceItem {
   owner: string
   dueDate: Date
   serialNumber: string
+}
+
+interface DetailedTrademarkInfo {
+  id: string
+  portfolioNumber: string
   applicationNumber: string
-  proprietor: string
-  attorney: string
-  status: string
   class: string
+  status: string
+  applicationDate: string
+  owner: string
+  ownerAddress: string
+  attorney: string
+  attorneyAddress: string
+  state: string
+  appropriateOffice: string
+  tmType: string
+  tmCategory: string
+  filingMode: string
+  userDetail: string
   alert: string
+  upcomingHearingDate: string
+  classDetail: string
+  wordMark?: string
+  pendingCompliances: Array<{
+    type: string
+    dueDate: string
+  }>
+  uploadedDocuments: Array<{
+    name: string
+    date: string
+  }>
 }
 
 const complianceTypes: ComplianceType[] = [
@@ -47,6 +83,7 @@ const complianceTypes: ComplianceType[] = [
   "Hearing (Opposition)",
 ]
 
+// Sample compliance data
 const complianceData: ComplianceItem[] = [
   {
     id: "1",
@@ -57,12 +94,6 @@ const complianceData: ComplianceItem[] = [
     owner: "SUVIGYA PATHAK Single Firm",
     dueDate: new Date("2025-04-01"),
     serialNumber: "5872957",
-    applicationNumber: "5872957",
-    proprietor: "SUVIGYA PATHAK Single Firm",
-    attorney: "ANUJ SHARMA ADVOCATES[17363]",
-    status: "Objected",
-    class: "33",
-    alert: "Reissue for amendment is Pending for processing",
   },
   {
     id: "2",
@@ -72,12 +103,6 @@ const complianceData: ComplianceItem[] = [
     owner: "LORDS DISTILLERY LIMITED Body Incorporate",
     dueDate: new Date("2025-04-08"),
     serialNumber: "4475820",
-    applicationNumber: "4475820",
-    proprietor: "LORDS DISTILLERY LIMITED Body Incorporate",
-    attorney: "LEGAL ASSOCIATES[12345]",
-    status: "Pending",
-    class: "25",
-    alert: "Response due soon",
   },
   {
     id: "3",
@@ -88,12 +113,6 @@ const complianceData: ComplianceItem[] = [
     owner: "SHOUKATH ALI Single Firm",
     dueDate: new Date("2025-04-14"),
     serialNumber: "589",
-    applicationNumber: "6850928",
-    proprietor: "SHOUKATH ALI Single Firm",
-    attorney: "ANJU SHARMA ADVOCATES[17363]",
-    status: "Objected",
-    class: "33",
-    alert: "Reissue for amendment is Pending for processing",
   },
   {
     id: "4",
@@ -104,12 +123,6 @@ const complianceData: ComplianceItem[] = [
     owner: "KITHURU MOHIDEEN TRADING AS NOOR AND COMPANY Single Firm",
     dueDate: new Date("2025-04-19"),
     serialNumber: "5918",
-    applicationNumber: "5918",
-    proprietor: "KITHURU MOHIDEEN TRADING AS NOOR AND COMPANY Single Firm",
-    attorney: "TRADEMARK SOLUTIONS[98765]",
-    status: "Active",
-    class: "12",
-    alert: "Evidence submission required",
   },
   {
     id: "5",
@@ -119,12 +132,6 @@ const complianceData: ComplianceItem[] = [
     owner: "NAOS LIFESCIENCES PVT LTD Body Incorporate",
     dueDate: new Date("2025-04-21"),
     serialNumber: "6429333",
-    applicationNumber: "6429333",
-    proprietor: "NAOS LIFESCIENCES PVT LTD Body Incorporate",
-    attorney: "IP EXPERTS[55555]",
-    status: "Under Review",
-    class: "5",
-    alert: "Counter statement filing pending",
   },
   {
     id: "6",
@@ -134,12 +141,6 @@ const complianceData: ComplianceItem[] = [
     owner: "SOUMYADIP HALDER Single Firm",
     dueDate: new Date("2025-04-22"),
     serialNumber: "5926775",
-    applicationNumber: "5926775",
-    proprietor: "SOUMYADIP HALDER Single Firm",
-    attorney: "LEGAL PARTNERS[77777]",
-    status: "Scheduled",
-    class: "30",
-    alert: "Hearing scheduled",
   },
   {
     id: "7",
@@ -149,12 +150,6 @@ const complianceData: ComplianceItem[] = [
     owner: "RATAN BEHARI AGARWAL & MANU GARG Joint Applicant",
     dueDate: new Date("2025-04-23"),
     serialNumber: "5786838",
-    applicationNumber: "5786838",
-    proprietor: "RATAN BEHARI AGARWAL & MANU GARG Joint Applicant",
-    attorney: "AGARWAL & CO[88888]",
-    status: "Pending",
-    class: "29",
-    alert: "Show cause hearing upcoming",
   },
   {
     id: "8",
@@ -164,12 +159,6 @@ const complianceData: ComplianceItem[] = [
     owner: "ALI JARRAR HUSAIN SHAH Single Firm",
     dueDate: new Date("2025-04-23"),
     serialNumber: "5930368",
-    applicationNumber: "5930368",
-    proprietor: "ALI JARRAR HUSAIN SHAH Single Firm",
-    attorney: "SHAH LEGAL[66666]",
-    status: "Active",
-    class: "3",
-    alert: "Compliance review needed",
   },
   {
     id: "9",
@@ -179,12 +168,6 @@ const complianceData: ComplianceItem[] = [
     owner: "ANKUR JAIN Single Firm",
     dueDate: new Date("2025-04-23"),
     serialNumber: "3982068",
-    applicationNumber: "3982068",
-    proprietor: "ANKUR JAIN Single Firm",
-    attorney: "JAIN ASSOCIATES[44444]",
-    status: "In Progress",
-    class: "11",
-    alert: "Evidence submission deadline approaching",
   },
   {
     id: "10",
@@ -194,12 +177,6 @@ const complianceData: ComplianceItem[] = [
     owner: "SARITA Single Firm",
     dueDate: new Date("2025-04-28"),
     serialNumber: "5921370",
-    applicationNumber: "5921370",
-    proprietor: "SARITA Single Firm",
-    attorney: "HERBAL IP[33333]",
-    status: "Pending",
-    class: "5",
-    alert: "Hearing notification sent",
   },
 ]
 
@@ -219,8 +196,7 @@ export function CompliancePage() {
   const [currentDate, setCurrentDate] = useState(new Date(2025, 3, 1)) // April 2025
   const [selectedTypes, setSelectedTypes] = useState<Set<ComplianceType>>(new Set(complianceTypes))
   const [isFilterOpen, setIsFilterOpen] = useState(false)
-  const [hoveredItem, setHoveredItem] = useState<ComplianceItem | null>(null)
-  const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 })
+  const [selectedCompliance, setSelectedCompliance] = useState<DetailedTrademarkInfo | null>(null)
 
   const monthNames = [
     "January",
@@ -247,6 +223,7 @@ export function CompliancePage() {
 
     const days = []
 
+    // Previous month days
     for (let i = firstDay - 1; i >= 0; i--) {
       days.push({
         date: daysInPrevMonth - i,
@@ -255,6 +232,7 @@ export function CompliancePage() {
       })
     }
 
+    // Current month days
     for (let i = 1; i <= daysInMonth; i++) {
       days.push({
         date: i,
@@ -263,6 +241,7 @@ export function CompliancePage() {
       })
     }
 
+    // Next month days to fill the grid
     const remainingDays = 42 - days.length
     for (let i = 1; i <= remainingDays; i++) {
       days.push({
@@ -342,24 +321,52 @@ export function CompliancePage() {
 
   const filteredCompliances = complianceData.filter((item) => selectedTypes.has(item.type))
 
-  const handleItemHover = (item: ComplianceItem, event: React.MouseEvent) => {
-    const rect = event.currentTarget.getBoundingClientRect()
-    setPopupPosition({
-      x: rect.right + 10,
-      y: rect.top,
-    })
-    setHoveredItem(item)
-  }
-
-  const handleItemLeave = () => {
-    setHoveredItem(null)
+  const handleComplianceClick = (item: ComplianceItem) => {
+    // Mock detailed data - in real app, fetch from API
+    const detailedInfo: DetailedTrademarkInfo = {
+      id: item.id,
+      portfolioNumber: "5892928",
+      applicationNumber: item.serialNumber,
+      class: "35",
+      status: "Objected",
+      applicationDate: "2023-04-14",
+      owner: item.owner,
+      ownerAddress: "49/ 2 Sellappilakuttai Village, Omalur Taluk, Salem - 636304, Tamil Nadu",
+      attorney: "ANU SHARMA ADVOCATE[H7363]",
+      attorneyAddress: "625, SECTOR-5, NEAR HUDA GROUND, GURGAON, HR 122001",
+      state: "TAMIL NADU",
+      appropriateOffice: "CHENNAI",
+      tmType: "DEVICE",
+      tmCategory: "TRADE MARK",
+      filingMode: "e-Filing",
+      userDetail: "11/06/2022",
+      alert: "Request for amendment is Pending for processing",
+      upcomingHearingDate: "2025-05-26",
+      classDetail:
+        "[CLASS : 35]Retail and wholesale services in relation to precious stones; Retail services in relation to building materials; Retail services in relation to floor coverings; Advertising; business management, organization and administration; office functions;",
+      wordMark: item.wordMark,
+      pendingCompliances: [
+        { type: "Hearing (Show Cause)", dueDate: "2024-12-05" },
+        { type: "Hearing (Show Cause)", dueDate: "2025-02-24" },
+        { type: "Hearing (Show Cause)", dueDate: "2025-04-14" },
+        { type: "Hearing (Show Cause)", dueDate: "2025-05-26" },
+      ],
+      uploadedDocuments: [
+        { name: "Authorization Letter", date: "2025-02-20" },
+        { name: "TM-MICORRECTION OF CLERICAL ERROR OR FOR AMENDMENT U/9 37)", date: "2024-12-09" },
+      ],
+    }
+    setSelectedCompliance(detailedInfo)
   }
 
   return (
     <div className="flex min-h-screen bg-gray-50">
+      {/* Sidebar */}
       <Sidebar />
 
+      {/* Main Content */}
       <div className="flex-1 p-8">
+        {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
             <h1 className="text-2xl font-bold">Compliances</h1>
@@ -442,8 +449,10 @@ export function CompliancePage() {
           )}
         </div>
 
+        {/* Content Area */}
         {isCalendarMode ? (
-          <div className="bg-white rounded-lg border border-gray-200 relative">
+          <div className="bg-white rounded-lg border border-gray-200">
+            {/* Calendar Header */}
             <div className="grid grid-cols-7 border-b border-gray-200">
               {dayNames.map((day) => (
                 <div key={day} className="p-4 text-center text-sm font-medium text-gray-500">
@@ -452,6 +461,7 @@ export function CompliancePage() {
               ))}
             </div>
 
+            {/* Calendar Grid */}
             <div className="grid grid-cols-7">
               {getMonthDays(currentDate).map((day, index) => {
                 const compliances = getCompliancesForDate(day.fullDate)
@@ -486,9 +496,8 @@ export function CompliancePage() {
                       {compliances.slice(0, 3).map((item) => (
                         <div
                           key={item.id}
-                          className={`text-xs px-2 py-1 rounded ${typeColors[item.type]} text-white truncate cursor-pointer hover:opacity-90 transition-opacity`}
-                          onMouseEnter={(e) => handleItemHover(item, e)}
-                          onMouseLeave={handleItemLeave}
+                          onClick={() => handleComplianceClick(item)}
+                          className={`text-xs px-2 py-1 rounded ${typeColors[item.type]} text-white truncate cursor-pointer hover:opacity-80`}
                         >
                           {item.serialNumber} {item.name.substring(0, 15)}...
                         </div>
@@ -501,57 +510,6 @@ export function CompliancePage() {
                 )
               })}
             </div>
-
-            {hoveredItem && (
-              <div
-                className="fixed z-50 w-80 bg-white border border-gray-300 rounded-lg shadow-2xl"
-                style={{
-                  left: `${popupPosition.x}px`,
-                  top: `${popupPosition.y}px`,
-                }}
-              >
-                <div className={`${typeColors[hoveredItem.type]} text-white px-4 py-3 rounded-t-lg font-medium`}>
-                  {hoveredItem.name}
-                </div>
-
-                <div className="p-4 space-y-3">
-                  <div>
-                    <div className="text-xs text-gray-500">Application</div>
-                    <div className="text-sm font-medium text-gray-900">{hoveredItem.applicationNumber}</div>
-                  </div>
-
-                  <div>
-                    <div className="text-xs text-gray-500">Word Mark</div>
-                    <div className="text-sm font-medium text-gray-900">{hoveredItem.trademark}</div>
-                  </div>
-
-                  <div>
-                    <div className="text-xs text-gray-500">Proprietor</div>
-                    <div className="text-sm text-gray-900">{hoveredItem.proprietor}</div>
-                  </div>
-
-                  <div>
-                    <div className="text-xs text-gray-500">Attorney</div>
-                    <div className="text-sm text-gray-900">{hoveredItem.attorney}</div>
-                  </div>
-
-                  <div>
-                    <div className="text-xs text-gray-500">Status</div>
-                    <div className="text-sm font-medium text-red-500">{hoveredItem.status}</div>
-                  </div>
-
-                  <div>
-                    <div className="text-xs text-gray-500">Class</div>
-                    <div className="text-sm text-gray-900">{hoveredItem.class}</div>
-                  </div>
-
-                  <div>
-                    <div className="text-xs text-gray-500">Alert</div>
-                    <div className="text-sm text-orange-600">{hoveredItem.alert}</div>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         ) : (
           <div className="bg-white rounded-lg border border-gray-200">
@@ -570,7 +528,11 @@ export function CompliancePage() {
                   {filteredCompliances.map((item) => {
                     const dueDateInfo = getDueDateDisplay(item.dueDate)
                     return (
-                      <tr key={item.id} className="hover:bg-gray-50">
+                      <tr
+                        key={item.id}
+                        className="hover:bg-gray-50 cursor-pointer"
+                        onClick={() => handleComplianceClick(item)}
+                      >
                         <td className="px-6 py-4">
                           <span
                             className={`text-sm font-medium ${
@@ -624,6 +586,192 @@ export function CompliancePage() {
           </div>
         )}
       </div>
+
+      {selectedCompliance && (
+        <>
+          {/* Overlay */}
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-40" onClick={() => setSelectedCompliance(null)} />
+
+          <div className="fixed right-0 top-0 h-full w-[800px] bg-white shadow-2xl z-50 overflow-y-auto">
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <div className="flex items-center gap-4">
+                <h2 className="text-xl font-bold">Portfolio TM #{selectedCompliance.portfolioNumber}</h2>
+                <Button variant="outline" size="sm">
+                  Assign Client
+                </Button>
+              </div>
+              <button onClick={() => setSelectedCompliance(null)} className="p-2 hover:bg-gray-100 rounded-lg">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-6 p-6">
+              {/* Left Column */}
+              <div className="space-y-6">
+                {/* Pending Compliance */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                    <span>📋</span> Pending Compliance
+                  </h3>
+                  <div className="space-y-3">
+                    {selectedCompliance.pendingCompliances.map((comp, idx) => (
+                      <div key={idx} className="text-sm">
+                        <div className="font-medium text-purple-600">{comp.type}</div>
+                        <div className="text-gray-600">Due Date: {comp.dueDate}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Notes Section */}
+                <div className="border border-gray-200 rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="font-semibold">📝 Notes</h3>
+                    <button className="text-sm text-blue-600 hover:underline">Save</button>
+                  </div>
+
+                  {/* Rich Text Editor Toolbar */}
+                  <div className="flex items-center gap-2 mb-3 pb-3 border-b border-gray-200">
+                    <button className="p-1 hover:bg-gray-100 rounded">
+                      <span className="text-sm font-bold">H1</span>
+                    </button>
+                    <button className="p-1 hover:bg-gray-100 rounded">
+                      <span className="text-sm font-bold">H2</span>
+                    </button>
+                    <button className="p-1 hover:bg-gray-100 rounded">
+                      <Bold className="w-4 h-4" />
+                    </button>
+                    <button className="p-1 hover:bg-gray-100 rounded">
+                      <Italic className="w-4 h-4" />
+                    </button>
+                    <button className="p-1 hover:bg-gray-100 rounded">
+                      <Code className="w-4 h-4" />
+                    </button>
+                    <button className="p-1 hover:bg-gray-100 rounded">
+                      <List className="w-4 h-4" />
+                    </button>
+                    <button className="p-1 hover:bg-gray-100 rounded">
+                      <ListOrdered className="w-4 h-4" />
+                    </button>
+                    <button className="p-1 hover:bg-gray-100 rounded">
+                      <AlignLeft className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  <textarea
+                    placeholder="Start writing notes..."
+                    className="w-full h-32 text-sm border-0 focus:outline-none resize-none"
+                  />
+                </div>
+              </div>
+
+              {/* Right Column */}
+              <div className="space-y-6">
+                {/* Trademark Logo/Image */}
+                <div className="flex justify-end">
+                  {selectedCompliance.wordMark ? (
+                    <Image
+                      src={selectedCompliance.wordMark || "/placeholder.svg"}
+                      alt="Trademark"
+                      width={120}
+                      height={120}
+                      className="rounded border border-gray-200"
+                    />
+                  ) : (
+                    <div className="text-4xl font-bold text-gray-800">KMB QUARRIES</div>
+                  )}
+                </div>
+
+                {/* Trademark Details */}
+                <div className="space-y-3 text-sm">
+                  <div className="grid grid-cols-2 gap-2">
+                    <span className="text-gray-600">Application Number</span>
+                    <span className="font-medium">{selectedCompliance.applicationNumber}</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <span className="text-gray-600">Class</span>
+                    <span className="font-medium">{selectedCompliance.class}</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <span className="text-gray-600">Status</span>
+                    <span className="font-medium text-red-600">{selectedCompliance.status}</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <span className="text-gray-600">Application Date</span>
+                    <span className="font-medium">{selectedCompliance.applicationDate}</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <span className="text-gray-600">Owner</span>
+                    <span className="font-medium">{selectedCompliance.owner}</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <span className="text-gray-600">Owner Address</span>
+                    <span className="font-medium text-xs leading-relaxed">{selectedCompliance.ownerAddress}</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <span className="text-gray-600">Attorney</span>
+                    <span className="font-medium">{selectedCompliance.attorney}</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <span className="text-gray-600">Attorney Address</span>
+                    <span className="font-medium text-xs leading-relaxed">{selectedCompliance.attorneyAddress}</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <span className="text-gray-600">State</span>
+                    <span className="font-medium">{selectedCompliance.state}</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <span className="text-gray-600">Appropriate Office</span>
+                    <span className="font-medium">{selectedCompliance.appropriateOffice}</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <span className="text-gray-600">TM Type</span>
+                    <span className="font-medium">{selectedCompliance.tmType}</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <span className="text-gray-600">TM Category</span>
+                    <span className="font-medium">{selectedCompliance.tmCategory}</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <span className="text-gray-600">Filing Mode</span>
+                    <span className="font-medium">{selectedCompliance.filingMode}</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <span className="text-gray-600">User Detail</span>
+                    <span className="font-medium">{selectedCompliance.userDetail}</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <span className="text-gray-600">Alert</span>
+                    <span className="font-medium text-orange-600">{selectedCompliance.alert}</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <span className="text-gray-600">Upcoming Hearing Date</span>
+                    <span className="font-medium">{selectedCompliance.upcomingHearingDate}</span>
+                  </div>
+                  <div className="col-span-2">
+                    <span className="text-gray-600 block mb-1">Class Detail</span>
+                    <p className="text-xs leading-relaxed">{selectedCompliance.classDetail}</p>
+                  </div>
+                </div>
+
+                {/* Uploaded Documents */}
+                <div>
+                  <h3 className="font-semibold mb-3">Uploaded Documents</h3>
+                  <div className="space-y-2">
+                    {selectedCompliance.uploadedDocuments.map((doc, idx) => (
+                      <div key={idx} className="flex items-center justify-between text-sm p-2 hover:bg-gray-50 rounded">
+                        <span className="text-blue-600">{doc.name}</span>
+                        <span className="text-gray-500">{doc.date}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   )
 }
