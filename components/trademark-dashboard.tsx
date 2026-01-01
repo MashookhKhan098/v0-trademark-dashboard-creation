@@ -2,21 +2,9 @@
 
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import {
-  LayoutDashboard,
-  FolderOpen,
-  Users,
-  ShieldCheck,
-  Bell,
-  Eye,
-  Search,
-  Sparkles,
-  ChevronRight,
-  Settings,
-  ArrowRight,
-} from "lucide-react"
+import { ArrowRight } from "lucide-react"
 import { BarChart, Bar, XAxis, ResponsiveContainer, PieChart, Pie, Cell } from "recharts"
+import { Sidebar } from "@/components/sidebar" // Importing the shared Sidebar component
 
 // Sample data for the monthly filing report chart
 const monthlyData = [
@@ -79,83 +67,7 @@ export function TrademarkDashboard() {
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar */}
-      <aside className="w-72 bg-white border-r border-gray-200 flex flex-col">
-        {/* Logo/Brand */}
-        <div className="p-4 border-b border-gray-200">
-          <div className="flex items-center gap-2">
-            <Settings className="h-5 w-5 text-gray-700" />
-            <span className="font-semibold text-gray-900">TM Manager</span>
-          </div>
-        </div>
-
-        {/* Navigation */}
-        <nav className="flex-1 p-4">
-          <div className="space-y-1">
-            <h3 className="px-3 mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Platform</h3>
-            <Button
-              variant="secondary"
-              className="w-full justify-start gap-3 bg-indigo-50 text-indigo-700 hover:bg-indigo-100"
-            >
-              <LayoutDashboard className="h-4 w-4" />
-              Dashboard
-            </Button>
-            <Button variant="ghost" className="w-full justify-between text-gray-700 hover:bg-gray-100">
-              <div className="flex items-center gap-3">
-                <FolderOpen className="h-4 w-4" />
-                My Portfolio
-              </div>
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" className="w-full justify-start gap-3 text-gray-700 hover:bg-gray-100">
-              <Users className="h-4 w-4" />
-              Clients Manager
-            </Button>
-            <Button variant="ghost" className="w-full justify-start gap-3 text-gray-700 hover:bg-gray-100">
-              <ShieldCheck className="h-4 w-4" />
-              Compliance
-            </Button>
-            <Button variant="ghost" className="w-full justify-between text-gray-700 hover:bg-gray-100">
-              <div className="flex items-center gap-3">
-                <Bell className="h-4 w-4" />
-                All Updates
-              </div>
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" className="w-full justify-between text-gray-700 hover:bg-gray-100">
-              <div className="flex items-center gap-3">
-                <Eye className="h-4 w-4" />
-                TM Watch
-              </div>
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" className="w-full justify-between text-gray-700 hover:bg-gray-100">
-              <div className="flex items-center gap-3">
-                <Search className="h-4 w-4" />
-                Public Search
-              </div>
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" className="w-full justify-start gap-3 text-gray-700 hover:bg-gray-100">
-              <Sparkles className="h-4 w-4" />
-              AI Assistant(Beta)
-            </Button>
-          </div>
-        </nav>
-
-        {/* User Profile */}
-        <div className="p-4 border-t border-gray-200">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-full bg-gray-900 flex items-center justify-center text-white font-semibold">
-              A
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-gray-900">Ashish</p>
-              <p className="text-xs text-gray-500 truncate">ashish@marksimpl.com</p>
-            </div>
-            <Settings className="h-4 w-4 text-gray-400" />
-          </div>
-        </div>
-      </aside>
+      <Sidebar />
 
       {/* Main Content */}
       <main className="flex-1 overflow-auto">
