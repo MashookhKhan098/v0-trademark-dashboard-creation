@@ -1,5 +1,7 @@
 "use client"
 
+import type React from "react"
+
 import { useState } from "react"
 import { ChevronLeft, ChevronRight, ChevronDown, Search, Check } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -26,6 +28,12 @@ interface ComplianceItem {
   owner: string
   dueDate: Date
   serialNumber: string
+  applicationNumber: string
+  proprietor: string
+  attorney: string
+  status: string
+  class: string
+  alert: string
 }
 
 const complianceTypes: ComplianceType[] = [
@@ -39,7 +47,6 @@ const complianceTypes: ComplianceType[] = [
   "Hearing (Opposition)",
 ]
 
-// Sample compliance data
 const complianceData: ComplianceItem[] = [
   {
     id: "1",
@@ -50,6 +57,12 @@ const complianceData: ComplianceItem[] = [
     owner: "SUVIGYA PATHAK Single Firm",
     dueDate: new Date("2025-04-01"),
     serialNumber: "5872957",
+    applicationNumber: "5872957",
+    proprietor: "SUVIGYA PATHAK Single Firm",
+    attorney: "ANUJ SHARMA ADVOCATES[17363]",
+    status: "Objected",
+    class: "33",
+    alert: "Reissue for amendment is Pending for processing",
   },
   {
     id: "2",
@@ -59,6 +72,12 @@ const complianceData: ComplianceItem[] = [
     owner: "LORDS DISTILLERY LIMITED Body Incorporate",
     dueDate: new Date("2025-04-08"),
     serialNumber: "4475820",
+    applicationNumber: "4475820",
+    proprietor: "LORDS DISTILLERY LIMITED Body Incorporate",
+    attorney: "LEGAL ASSOCIATES[12345]",
+    status: "Pending",
+    class: "25",
+    alert: "Response due soon",
   },
   {
     id: "3",
@@ -69,6 +88,12 @@ const complianceData: ComplianceItem[] = [
     owner: "SHOUKATH ALI Single Firm",
     dueDate: new Date("2025-04-14"),
     serialNumber: "589",
+    applicationNumber: "6850928",
+    proprietor: "SHOUKATH ALI Single Firm",
+    attorney: "ANJU SHARMA ADVOCATES[17363]",
+    status: "Objected",
+    class: "33",
+    alert: "Reissue for amendment is Pending for processing",
   },
   {
     id: "4",
@@ -79,6 +104,12 @@ const complianceData: ComplianceItem[] = [
     owner: "KITHURU MOHIDEEN TRADING AS NOOR AND COMPANY Single Firm",
     dueDate: new Date("2025-04-19"),
     serialNumber: "5918",
+    applicationNumber: "5918",
+    proprietor: "KITHURU MOHIDEEN TRADING AS NOOR AND COMPANY Single Firm",
+    attorney: "TRADEMARK SOLUTIONS[98765]",
+    status: "Active",
+    class: "12",
+    alert: "Evidence submission required",
   },
   {
     id: "5",
@@ -88,6 +119,12 @@ const complianceData: ComplianceItem[] = [
     owner: "NAOS LIFESCIENCES PVT LTD Body Incorporate",
     dueDate: new Date("2025-04-21"),
     serialNumber: "6429333",
+    applicationNumber: "6429333",
+    proprietor: "NAOS LIFESCIENCES PVT LTD Body Incorporate",
+    attorney: "IP EXPERTS[55555]",
+    status: "Under Review",
+    class: "5",
+    alert: "Counter statement filing pending",
   },
   {
     id: "6",
@@ -97,6 +134,12 @@ const complianceData: ComplianceItem[] = [
     owner: "SOUMYADIP HALDER Single Firm",
     dueDate: new Date("2025-04-22"),
     serialNumber: "5926775",
+    applicationNumber: "5926775",
+    proprietor: "SOUMYADIP HALDER Single Firm",
+    attorney: "LEGAL PARTNERS[77777]",
+    status: "Scheduled",
+    class: "30",
+    alert: "Hearing scheduled",
   },
   {
     id: "7",
@@ -106,6 +149,12 @@ const complianceData: ComplianceItem[] = [
     owner: "RATAN BEHARI AGARWAL & MANU GARG Joint Applicant",
     dueDate: new Date("2025-04-23"),
     serialNumber: "5786838",
+    applicationNumber: "5786838",
+    proprietor: "RATAN BEHARI AGARWAL & MANU GARG Joint Applicant",
+    attorney: "AGARWAL & CO[88888]",
+    status: "Pending",
+    class: "29",
+    alert: "Show cause hearing upcoming",
   },
   {
     id: "8",
@@ -115,6 +164,12 @@ const complianceData: ComplianceItem[] = [
     owner: "ALI JARRAR HUSAIN SHAH Single Firm",
     dueDate: new Date("2025-04-23"),
     serialNumber: "5930368",
+    applicationNumber: "5930368",
+    proprietor: "ALI JARRAR HUSAIN SHAH Single Firm",
+    attorney: "SHAH LEGAL[66666]",
+    status: "Active",
+    class: "3",
+    alert: "Compliance review needed",
   },
   {
     id: "9",
@@ -124,6 +179,12 @@ const complianceData: ComplianceItem[] = [
     owner: "ANKUR JAIN Single Firm",
     dueDate: new Date("2025-04-23"),
     serialNumber: "3982068",
+    applicationNumber: "3982068",
+    proprietor: "ANKUR JAIN Single Firm",
+    attorney: "JAIN ASSOCIATES[44444]",
+    status: "In Progress",
+    class: "11",
+    alert: "Evidence submission deadline approaching",
   },
   {
     id: "10",
@@ -133,6 +194,12 @@ const complianceData: ComplianceItem[] = [
     owner: "SARITA Single Firm",
     dueDate: new Date("2025-04-28"),
     serialNumber: "5921370",
+    applicationNumber: "5921370",
+    proprietor: "SARITA Single Firm",
+    attorney: "HERBAL IP[33333]",
+    status: "Pending",
+    class: "5",
+    alert: "Hearing notification sent",
   },
 ]
 
@@ -152,6 +219,8 @@ export function CompliancePage() {
   const [currentDate, setCurrentDate] = useState(new Date(2025, 3, 1)) // April 2025
   const [selectedTypes, setSelectedTypes] = useState<Set<ComplianceType>>(new Set(complianceTypes))
   const [isFilterOpen, setIsFilterOpen] = useState(false)
+  const [hoveredItem, setHoveredItem] = useState<ComplianceItem | null>(null)
+  const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 })
 
   const monthNames = [
     "January",
@@ -178,7 +247,6 @@ export function CompliancePage() {
 
     const days = []
 
-    // Previous month days
     for (let i = firstDay - 1; i >= 0; i--) {
       days.push({
         date: daysInPrevMonth - i,
@@ -187,7 +255,6 @@ export function CompliancePage() {
       })
     }
 
-    // Current month days
     for (let i = 1; i <= daysInMonth; i++) {
       days.push({
         date: i,
@@ -196,7 +263,6 @@ export function CompliancePage() {
       })
     }
 
-    // Next month days to fill the grid
     const remainingDays = 42 - days.length
     for (let i = 1; i <= remainingDays; i++) {
       days.push({
@@ -276,14 +342,24 @@ export function CompliancePage() {
 
   const filteredCompliances = complianceData.filter((item) => selectedTypes.has(item.type))
 
+  const handleItemHover = (item: ComplianceItem, event: React.MouseEvent) => {
+    const rect = event.currentTarget.getBoundingClientRect()
+    setPopupPosition({
+      x: rect.right + 10,
+      y: rect.top,
+    })
+    setHoveredItem(item)
+  }
+
+  const handleItemLeave = () => {
+    setHoveredItem(null)
+  }
+
   return (
     <div className="flex min-h-screen bg-gray-50">
-      {/* Sidebar */}
       <Sidebar />
 
-      {/* Main Content */}
       <div className="flex-1 p-8">
-        {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
             <h1 className="text-2xl font-bold">Compliances</h1>
@@ -366,10 +442,8 @@ export function CompliancePage() {
           )}
         </div>
 
-        {/* Content Area */}
         {isCalendarMode ? (
-          <div className="bg-white rounded-lg border border-gray-200">
-            {/* Calendar Header */}
+          <div className="bg-white rounded-lg border border-gray-200 relative">
             <div className="grid grid-cols-7 border-b border-gray-200">
               {dayNames.map((day) => (
                 <div key={day} className="p-4 text-center text-sm font-medium text-gray-500">
@@ -378,7 +452,6 @@ export function CompliancePage() {
               ))}
             </div>
 
-            {/* Calendar Grid */}
             <div className="grid grid-cols-7">
               {getMonthDays(currentDate).map((day, index) => {
                 const compliances = getCompliancesForDate(day.fullDate)
@@ -413,7 +486,9 @@ export function CompliancePage() {
                       {compliances.slice(0, 3).map((item) => (
                         <div
                           key={item.id}
-                          className={`text-xs px-2 py-1 rounded ${typeColors[item.type]} text-white truncate`}
+                          className={`text-xs px-2 py-1 rounded ${typeColors[item.type]} text-white truncate cursor-pointer hover:opacity-90 transition-opacity`}
+                          onMouseEnter={(e) => handleItemHover(item, e)}
+                          onMouseLeave={handleItemLeave}
                         >
                           {item.serialNumber} {item.name.substring(0, 15)}...
                         </div>
@@ -426,6 +501,57 @@ export function CompliancePage() {
                 )
               })}
             </div>
+
+            {hoveredItem && (
+              <div
+                className="fixed z-50 w-80 bg-white border border-gray-300 rounded-lg shadow-2xl"
+                style={{
+                  left: `${popupPosition.x}px`,
+                  top: `${popupPosition.y}px`,
+                }}
+              >
+                <div className={`${typeColors[hoveredItem.type]} text-white px-4 py-3 rounded-t-lg font-medium`}>
+                  {hoveredItem.name}
+                </div>
+
+                <div className="p-4 space-y-3">
+                  <div>
+                    <div className="text-xs text-gray-500">Application</div>
+                    <div className="text-sm font-medium text-gray-900">{hoveredItem.applicationNumber}</div>
+                  </div>
+
+                  <div>
+                    <div className="text-xs text-gray-500">Word Mark</div>
+                    <div className="text-sm font-medium text-gray-900">{hoveredItem.trademark}</div>
+                  </div>
+
+                  <div>
+                    <div className="text-xs text-gray-500">Proprietor</div>
+                    <div className="text-sm text-gray-900">{hoveredItem.proprietor}</div>
+                  </div>
+
+                  <div>
+                    <div className="text-xs text-gray-500">Attorney</div>
+                    <div className="text-sm text-gray-900">{hoveredItem.attorney}</div>
+                  </div>
+
+                  <div>
+                    <div className="text-xs text-gray-500">Status</div>
+                    <div className="text-sm font-medium text-red-500">{hoveredItem.status}</div>
+                  </div>
+
+                  <div>
+                    <div className="text-xs text-gray-500">Class</div>
+                    <div className="text-sm text-gray-900">{hoveredItem.class}</div>
+                  </div>
+
+                  <div>
+                    <div className="text-xs text-gray-500">Alert</div>
+                    <div className="text-sm text-orange-600">{hoveredItem.alert}</div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         ) : (
           <div className="bg-white rounded-lg border border-gray-200">
