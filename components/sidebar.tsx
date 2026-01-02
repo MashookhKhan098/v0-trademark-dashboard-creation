@@ -39,7 +39,7 @@ export function Sidebar() {
   const portfolioSubmenu = [
     { icon: Hash, label: "Trademarks", href: "/portfolio" },
     { icon: Circle, label: "Oppositions", href: "/portfolio/oppositions" },
-    { icon: Plus, label: "Add TMs/Oppositions", href: "/portfolio/add" },
+    { icon: Plus, label: "Add TMs/Oppositions", href: "/portfolio/add-items" },
   ]
 
   return (
